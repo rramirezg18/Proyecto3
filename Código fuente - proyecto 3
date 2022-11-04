@@ -1,0 +1,92 @@
+'''
+@Roberto Ramírez <rramirezg18@miumg.edu.gt
+@Editor de texto con interfaz gráfica Tkinter
+@date 02/11/2022
+@license GNU General Public License v. 1.0
+'''
+import tkinter as tk
+from tkinter import scrolledtext as st
+from tkinter import filedialog as fd
+from tkinter import messagebox as mb
+import os
+
+class aplicacion:
+    def __init__(self):
+        self.app=tk.Tk()
+        self.app.title("Editor de texto - Proyecto 3")
+        self.menu()
+        self.texto=st.ScrolledText(self.app, width=70, height=20, undo=True, font=("Comic Sans MS", 12) )
+        self.texto.grid(padx=5, pady=3)     
+        self.app.mainloop()
+
+    def menu(self):
+        barramenu = tk.Menu(self.app)
+        self.app.config(menu=barramenu)
+        menuarchivo = tk.Menu(barramenu, tearoff=0)
+        menueditar = tk.Menu(barramenu, tearoff=0)
+        menuayuda = tk.Menu(barramenu, tearoff=0)
+        menuarchivo.add_command(label="Nuevo", command=self.nuevo)
+        menuarchivo.add_command(label="Abir", command=self.abrir)
+        menuarchivo.add_command(label="Guardar", command=self.guardar)
+        menuarchivo.add_command(label="Guardar como", command=self.guardarcomo)
+        menuarchivo.add_separator()
+        menuarchivo.add_command(label="Salir", command=self.app.destroy)
+        barramenu.add_cascade(label="Archivo", menu=menuarchivo)
+        #menueditar.add_command(label="Deshacer", command=self.deshacer)
+        #menueditar.add_command(label="Rehacer", command=self.rehacer)
+        menueditar.add_command(label="Deshacer")#, command=self.texto.edit_undo
+        menueditar.add_command(label="Rehacer")#, command=self.texto.edit_redo
+        menueditar.add_separator()
+        menueditar.add_command(label="Borrar Todo", command=self.borrar)
+        barramenu.add_cascade(label="Editar", menu=menueditar)
+        menuayuda.add_command(label="Información", command=self.licencia)
+        menuayuda.add_command(label="Manual de usuario", command=self.manual)
+        menuayuda.add_command(label="Integrantes", command=self.integrantes)
+        barramenu.add_cascade(label="Ayuda", menu=menuayuda)
+
+    def deshacer(self, event=None):
+        self.app.event_generate("<<undo>>")
+        
+    def rehacer(self, event=None):
+        self.app.event_generate("<<redo>>")
+
+    def borrar(self):
+        self.texto.delete("1.0", tk.END)
+
+    def guardarcomo(self): 
+        nombrearchivo=fd.asksaveasfilename(initialdir = "/",title = "Guardar como",filetypes = (("txt files","*.txt"),("todos los archivos","*.*")))
+        if nombrearchivo!='':
+            archivo=open(nombrearchivo, "w", encoding="utf-8")
+            archivo.write(self.texto.get("1.0", tk.END))
+            archivo.close()
+            mb.showinfo("Información", "Archivo guardado correctamente")
+            
+    def guardar(self):
+        nombrearchivo=fd.asksaveasfilename(initialdir = "/",title = "Guardar",filetypes = (("txt files","*.txt"),("todos los archivos","*.*")))
+        if nombrearchivo!='':
+            archivo=open(nombrearchivo, "w", encoding="utf-8")
+            archivo.write(self.texto.get("1.0", tk.END))
+            archivo.close()
+            mb.showinfo("Información", "Los datos fueron guardados en el archivo.")
+
+    def abrir(self):
+        nombrearchivo=fd.askopenfilename(initialdir = "/",title = "Seleccione archivo",filetypes = (("txt files","*.txt"),("todos los archivos","*.*")))
+        if nombrearchivo!='':
+            archivo=open(nombrearchivo, "r", encoding="utf-8")
+            contenido=archivo.read()
+            archivo.close()
+            self.texto.delete("1.0", tk.END) 
+            self.texto.insert("1.0", contenido)
+    def nuevo(self):
+        self.texto.delete("1.0", tk.END)
+            
+    def manual(self):
+        os.startfile("C:\Algoritmos\MANUAL DE USUARIO - PROYECTO III.pdf")
+
+    def licencia(self):
+        mb.showinfo("Licencia", "GNU General Public License v. 1.0\nEditor de texto con interfaz grafica Tkinter\nPython 3.10.4")
+
+    def integrantes(self):
+        os.startfile("C:\Algoritmos\Integrantes.txt")
+
+aplicacion1=aplicacion()
